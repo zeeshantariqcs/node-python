@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">DASHBOARD</a>
+    <div class="collapse navbar-collapse justify-content-end">
+        <!--<a class="nav-link" href="http://xflowresearch.com/"><img src="/images/logo.png"> </a>-->
+        <a class="nav-link" href="http://xflowresearch.com/"><img id="logo" alt="x-Flow Logo"
+                                                                  src="/images/xFlow Logo.png">
+        </a>
+    </div>
+</nav>
+
+
+<div class="container-fluid main-body">
+    <div class="row">
+        <div class="col-md-12">
+            <form id="idn-form">
+                <h4>MSISDN</h4>
+                <div class="row">
+                    <div class="col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <!-- <label for="msisdn">MSISDN</label> -->
+                            <input required type="text" class="form-control" id="msisdn" aria-describedby="Msisdn"
+                                   placeholder="Enter MSISDN">
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <div style="">
+                                <button type="submit" class="btn grey-button"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="output" class="row d-none">
+        <div class="col-md-12">
+            <div class="panel panel-default output-panel">
+                <div class="panel-heading"><h4>RESULT</h4>
+                </div>
+
+                <div id="tablePanelBody" class="panel-body">
+                    <table class="table table-bordered table-hover specialCollapse">
+                        <thead>
+                        <tr>
+                            <th>MSISDN</th>
+                            <th>SITE</th>
+                            <th>PRIVATE IP</th>
+                            <th>PUBLIC IP</th>
+                            <th>PORT RANGE</th>
+                            <th>RULE APPLIED</th>
+                            <th>PACKET COUNT</th>
+                            <th>BYTE COUNT</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="tr-output">
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="action-btn">
+                    <a id="capture" class="btn grey-button" href="#" ><i class="fas fa-box"></i> Capture</a>
+                    <!--href="/images/myw3schoolsimage.jpg"-->
+                    <a id="download-file" class="btn grey-button d-none" href="./capture-traffic" download><i class="fas fa-download"></i> Download</a>
+               </div>
+
+            </div>
+        </div>
+    </div>
+    <div id="output-error" class="row d-none">
+        <div class="col-md-12">
+            <div class="alert alert-danger" role="alert">
+                <strong>Ohh!</strong> Some error occurred.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<footer class="footer site-footer">
+    <!--<p>Copyright © 2018 <a href="http://xflowresearch.com/" target="_blank">x-Flow Research Inc.</a> All rights reserved.</p>-->
+    <p>Copyright ©&nbsp;2018 · <a href="http://xflowresearch.com">xFlow Research Inc</a> · All Rights Reserved</p>
+</footer>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+
+<script>
+
+    function failureHtmlState() {
+        $('#output-error').removeClass('d-none');
+        $('#output').addClass('d-none');
+        $('#download-file').addClass('d-none');
+    }
+
+    function successHtmlState() {
+        $('#output').removeClass('d-none');
+        $('#output-error').addClass('d-none');
+    }
+
+    function fetchData(mssidn) {
+        if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12) {
+            $.post("./fetch-data",
+                {
+                    msisdn: mssidn
+                },
+                function (data, status) {
+                    if (status == "success" && typeof data !== "undefined" && data !== null) {
+
+                        // if (data[0] == "0")
+                        if (1) {
+                            successHtmlState();
+                            //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
+                            let msisdn = typeof data[1] != "undefined" ? data[1] : "";
+                            let site = typeof data[2] != "undefined" ? data[2] : "";
+                            let priv_ip = typeof data[3] != "undefined" ? data[3] : "";
+                            let pub_ip = typeof data[4] != "undefined" ? data[4] : "";
+                            let port_range = typeof data[5] != "undefined" ? data[5] : "";
+                            let rule_app = typeof data[6] != "undefined" ? data[6] : "";
+                            let packet_count = typeof data[7] != "undefined" ? data[7] : "";
+                            let byte_count = typeof data[8] != "undefined" ? data[8] : "";
+                            $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
+                        }
+                        else {
+                            //means not a vip number
+                            failureHtmlState();
+                            $('#output-error').find('.alert').html("Not a VIP MSISDN.");
+                        }
+                    } else {
+                        failureHtmlState();
+                    }
+                }).fail(function (response) {
+                failureHtmlState();
+                window.setInterval(function () {
+                    fetchData($('#msisdn').val());
+                }, 5000);
+            });
+        } else {
+            failureHtmlState();
+            $('#output-error').find('.alert').html("Not a valid MSISDN.");
+        }
+    }
+
+    function captureData(mssidn) {
+        if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12) {
+            $.post("./capture-traffic",
+                {
+                    msisdn: mssidn
+                },
+                function (data, status) {
+                    if (status == "success" && typeof data !== "undefined" && data !== null) {
+                        $('#download-file').removeClass('d-none');
+                    } else {
+                        failureHtmlState();
+                    }
+                }).fail(function (response) {
+                failureHtmlState();
+                window.setInterval(function () {
+                    fetchData($('#msisdn').val());
+                }, 5000);
+            });
+        } else {
+            failureHtmlState();
+            $('#output-error').find('.alert').html("Not a valid MSISDN.");
+        }
+    }
+
+    $(document).ready(function (e) {
+        $('#idn-form').on('submit', function (e) {
+            e.preventDefault();
+            fetchData($('#msisdn').val());
+        });
+
+        $('#capture').on('click', function (e) {
+            captureData($('#msisdn').val());
+        });
+    });
+</script>
+
+</body>
+</html>
