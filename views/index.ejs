@@ -27,14 +27,14 @@
             <form id="idn-form">
                 <h4>MSISDN</h4>
                 <div class="row">
-                    <div class="col-sm-6 col-md-6">
+                    <div class="col-sm-6 col-md-4">
                         <div class="form-group">
                             <!-- <label for="msisdn">MSISDN</label> -->
                             <input required type="text" class="form-control" id="msisdn" aria-describedby="Msisdn"
                                    placeholder="Enter MSISDN">
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-6">
+                    <div class="col-sm-6 col-md-2">
                         <div class="form-group">
                             <div style="">
                                 <button type="submit" class="btn grey-button"><i class="fas fa-search"></i></button>
@@ -75,10 +75,10 @@
                 </div>
 
                 <div class="action-btn">
-                    <a id="capture" class="btn grey-button" href="#" ><i class="fas fa-box"></i> Capture</a>
-                    <!--href="/images/myw3schoolsimage.jpg"-->
-                    <a id="download-file" class="btn grey-button d-none" href="./capture-traffic" download><i class="fas fa-download"></i> Download</a>
-               </div>
+                    <a id="capture" class="btn grey-button" href="javascript:void(0)"><i class="fas fa-box"></i> Capture</a>
+                    <a id="download-file" class="btn grey-button d-none" href="./capture-traffic" download><i
+                                class="fas fa-download"></i> Download</a>
+                </div>
 
             </div>
         </div>
@@ -135,8 +135,8 @@
                 function (data, status) {
                     if (status == "success" && typeof data !== "undefined" && data !== null) {
 
-                        // if (data[0] == "0")
-                        if (1) {
+                        //if (1) {
+                        if (data[0] == "0") {
                             successHtmlState();
                             //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
                             let msisdn = typeof data[1] != "undefined" ? data[1] : "";
@@ -169,29 +169,6 @@
         }
     }
 
-    function captureData(mssidn) {
-        if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12) {
-            $.post("./capture-traffic",
-                {
-                    msisdn: mssidn
-                },
-                function (data, status) {
-                    if (status == "success" && typeof data !== "undefined" && data !== null) {
-                        $('#download-file').removeClass('d-none');
-                    } else {
-                        failureHtmlState();
-                    }
-                }).fail(function (response) {
-                failureHtmlState();
-                window.setInterval(function () {
-                    fetchData($('#msisdn').val());
-                }, 5000);
-            });
-        } else {
-            failureHtmlState();
-            $('#output-error').find('.alert').html("Not a valid MSISDN.");
-        }
-    }
 
     $(document).ready(function (e) {
         $('#idn-form').on('submit', function (e) {
@@ -199,8 +176,39 @@
             fetchData($('#msisdn').val());
         });
 
+
         $('#capture').on('click', function (e) {
-            captureData($('#msisdn').val());
+            var $this = $(this);
+            var mssidn = $('#msisdn').val();
+            if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12) {
+                var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Capturing';
+                if ($(this).html() !== loadingText) {
+                    $this.data('original-text', $(this).html());
+                    $this.html(loadingText);
+                }
+                $.post("./capture-traffic",
+                    {
+                        msisdn: mssidn
+                    },
+                    function (data, status) {
+                        $this.html($this.data('original-text'));
+                        if (status == "success" && typeof data !== "undefined" && data !== null) {
+                            $('#download-file').removeClass('d-none');
+                        } else {
+                            failureHtmlState();
+                        }
+                    }).fail(function (response) {
+                    failureHtmlState();
+                    window.setInterval(function () {
+                        fetchData($('#msisdn').val());
+                    }, 5000);
+                });
+            } else {
+                $this.html($this.data('original-text'));
+                failureHtmlState();
+                $('#output-error').find('.alert').html("Not a valid MSISDN.");
+            }
+
         });
     });
 </script>
