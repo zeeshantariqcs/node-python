@@ -2,7 +2,7 @@
 <html>
 <head>
     <title><%= title %></title>
-    <link rel="icon" href="http://xflowresearch.com/wp-content/plugins/genesis-favicon-uploader/favicons/favicon.ico"/>
+    <link rel="icon" href="http://xflowresearch.com/wp-content/plugins/genesis-favicon-uploader/favicons/favicon.ico" />
     <link rel='stylesheet' href='/stylesheets/style.css'/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -60,31 +60,30 @@
 
                     <div id="tablePanelBody" class="panel-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover specialCollapse">
-                                <thead>
-                                <tr>
-                                    <th>MSISDN</th>
-                                    <th>SITE</th>
-                                    <th>PRIVATE IP</th>
-                                    <th>PUBLIC IP</th>
-                                    <th>PORT RANGE</th>
-                                    <th>RULE APPLIED</th>
-                                    <th>PACKET COUNT</th>
-                                    <th>BYTE COUNT</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr id="tr-output">
+                        <table class="table table-bordered table-hover specialCollapse">
+                            <thead>
+                            <tr>
+                                <th>MSISDN</th>
+                                <th>SITE</th>
+                                <th>PRIVATE IP</th>
+                                <th>PUBLIC IP</th>
+                                <th>PORT RANGE</th>
+                                <th>RULE APPLIED</th>
+                                <th>PACKET COUNT</th>
+                                <th>BYTE COUNT</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr id="tr-output">
 
-                                </tr>
-                                </tbody>
-                            </table>
+                            </tr>
+                            </tbody>
+                        </table>
                         </div>
                     </div>
 
                     <div class="action-btn">
-                        <a id="capture" class="btn grey-button" href="javascript:void(0)"><i class="fas fa-box"></i>
-                            Capture</a>
+                        <a id="capture" class="btn grey-button" href="javascript:void(0)"><i class="fas fa-box"></i> Capture</a>
                         <a id="download-file" class="btn grey-button d-none" href="./download-file" download><i
                                     class="fas fa-download"></i> Download</a>
                     </div>
@@ -103,6 +102,7 @@
     </div>
 
 
+
     <footer class="footer">
         <div class="container">
             <span>Copyright ©&nbsp;2018 · <a href="http://xflowresearch.com">xFlow Research Inc</a> · All Rights Reserved</span>
@@ -110,6 +110,9 @@
     </footer>
 
 </main>
+
+
+
 
 
 <!-- Bootstrap core JavaScript
@@ -147,8 +150,9 @@
                 function (data, status) {
                     if (status == "success" && typeof data !== "undefined" && data !== null) {
 
-//                        if (1) {
-                        if (data[0] == "0") {
+                        if (1) {
+                      //  if (data[0] == "0") {
+
                             successHtmlState();
                             //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
                             let msisdn = typeof data[1] != "undefined" ? data[1] : "";

@@ -16,6 +16,12 @@ router.get('/', function (req, res, next) {
 });
 
 
+/* GET home page. */
+router.get('/custom', function (req, res, next) {
+    return res.render('custom', {title: 'DASHBOARD', 'data': ''});
+});
+
+
 router.post('/fetch-data', function (req, res, next) {
     if (typeof req.body.msisdn !== "undefined" && req.body.msisdn !== "") {
         var options = {

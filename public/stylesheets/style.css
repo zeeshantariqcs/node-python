@@ -1,7 +1,20 @@
-body {
+/*body {*/
 
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  /*font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;*/
+/*}*/
+
+body {
+  margin: 0;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
+  background-color: #fff;
 }
+
+
 
 a {
   color: #00B7FF;
@@ -65,57 +78,36 @@ button.grey-button:hover,a.grey-button:hover {
 }
 
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 40px;
-  line-height: 30px;
-  background-color: #30383e!important;
-  color: white;
-  text-align: center;
-}
-.footer p{
-  margin-bottom: 0rem;
+/*.footer {*/
+  /*position: absolute;*/
+  /*bottom: 0;*/
+  /*width: 100%;*/
+  /*height: 40px;*/
+  /*line-height: 30px;*/
+  /*background-color: #30383e!important;*/
+  /*color: white;*/
+  /*text-align: center;*/
+/*}*/
+/*.footer p{*/
+  /*margin-bottom: 0rem;*/
 
-  padding-top: 6px;
-}
+  /*padding-top: 6px;*/
+/*}*/
 
-.footer-bottom {
-  padding: 10px 0 15px;
-  border-top: 1px solid #666;
-  background-color: #30383e;
-}
-.copyright-text p {
-  color: #ccc;
-  margin-top: 9px;
-  margin-bottom: 0;
-}
-.social-link li {
-  display: inline-block;
-  margin: 0 5px;
-}
-.social-link li a {
-  color: #ccc;
-  border: 1px solid #ccc;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 50%;
-  text-align: center;
-  display: inline-block;
-  font-size: 14px;
-  transition: .5s;
-}
+/*.footer-bottom {*/
+  /*padding: 10px 0 15px;*/
+  /*border-top: 1px solid #666;*/
+  /*background-color: #30383e;*/
+/*}*/
 
 .main-body{
   margin-top: 90px;
 }
 
 
-.site-title a {
-  background: url(http://xflowresearch.com/wp-content/uploads/2016/03/cropped-xflow-header.png) no-repeat !important;
-}
+/*.site-title a {*/
+  /*background: url(http://xflowresearch.com/wp-content/uploads/2016/03/cropped-xflow-header.png) no-repeat !important;*/
+/*}*/
 
 #logo{
   width: 120px;
@@ -126,3 +118,37 @@ button.grey-button:hover,a.grey-button:hover {
 .site-footer, .site-footer a, .site-footer p {
   color: #fff;
 }
+
+.table-responsive {
+  display: table;
+}
+
+
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  background-color: #30383e;
+  text-align: center;
+  color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
