@@ -2,11 +2,14 @@
 
 Procedure to run this script
 
+
 1) Install node js  (you can follow this tutorial https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-16-04)
 2) Install npm
 3) I've included the dummy python script which is simply printing the data. Give path to your python script
-4) run this command: npm init
-5) Bingo! site is up and can be accessed via this url: http://localhost:3000/dashboard
+4) Change config.js according to your file paths
+5) run this command: npm install
+6) run this command: npm start
+7) Bingo! site is up and can be accessed via this url: http://localhost:3000/dashboard
 
 
 What response node is expecting from python?
