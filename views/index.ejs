@@ -83,7 +83,8 @@
                     </div>
 
                     <div class="action-btn">
-                        <a id="capture" class="btn grey-button" href="javascript:void(0)"><i class="fas fa-box"></i>
+                        <a id="capture" data-action="1" class="btn grey-button" href="javascript:void(0)"><i
+                                    class="fas fa-box"></i>
                             Capture</a>
                         <a id="download-file" class="btn grey-button d-none" href="./download-file" download><i
                                     class="fas fa-download"></i> Download</a>
@@ -99,6 +100,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="main-loader" class="loading d-none">Loading&#8230;</div>
 
     </div>
 
@@ -131,10 +134,18 @@
         $('#output-error').removeClass('d-none');
         $('#output').addClass('d-none');
         $('#download-file').addClass('d-none');
+        $('#main-loader').addClass('d-none');
+    }
+
+    function initialHtmlState(){
+        $('#output').addClass('d-none');
+        $('#download-file').addClass('d-none');
+        $('#main-loader').removeClass('d-none');
     }
 
     function successHtmlState() {
         $('#output').removeClass('d-none');
+        $('#main-loader').addClass('d-none');
         $('#output-error').addClass('d-none');
     }
 
@@ -147,7 +158,6 @@
                 function (data, status) {
                     if (status == "success" && typeof data !== "undefined" && data !== null) {
 
-//                        if (1) {
                         if (data[0] == "0") {
                             successHtmlState();
                             //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
@@ -185,6 +195,7 @@
     $(document).ready(function (e) {
         $('#idn-form').on('submit', function (e) {
             e.preventDefault();
+            initialHtmlState();
             fetchData($('#msisdn').val());
         });
 
@@ -192,35 +203,41 @@
         $('#capture').on('click', function (e) {
             var $this = $(this);
             var mssidn = $('#msisdn').val();
+            var action = $(this).data("action");
+            console.log("I'm touched action " + action);
             if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12) {
-                var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Capturing';
-                if ($(this).html() !== loadingText) {
+                if (action == 1) {
+                    var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Stop';
                     $this.data('original-text', $(this).html());
+                    $('#download-file').addClass('d-none');
+                    $this.data('action', 0);
                     $this.html(loadingText);
+                } else {
+                    $this.data('action', 1);
+                    $this.html($this.data('original-text'));
                 }
                 $.post("./capture-traffic",
                     {
-                        msisdn: mssidn
+                        msisdn: mssidn,
+                        action: action
                     },
                     function (data, status) {
-                        $this.html($this.data('original-text'));
+                        //$this.html($this.data('original-text'));
                         if (status == "success" && typeof data !== "undefined" && data !== null) {
-                            $('#download-file').removeClass('d-none');
+                            if (action == 0) {
+                                $('#download-file').removeClass('d-none');
+                            }
                         } else {
                             failureHtmlState();
                         }
                     }).fail(function (response) {
                     failureHtmlState();
-                    window.setInterval(function () {
-                        fetchData($('#msisdn').val());
-                    }, 5000);
                 });
             } else {
                 $this.html($this.data('original-text'));
                 failureHtmlState();
                 $('#output-error').find('.alert').html("Not a valid MSISDN.");
             }
-
         });
     });
 </script>

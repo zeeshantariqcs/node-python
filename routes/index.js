@@ -95,10 +95,11 @@ router.get('/download-file', function (req, res) {
 
 router.post('/capture-traffic', function (req, res, next) {
     if (typeof req.body.msisdn !== "undefined" && req.body.msisdn !== "") {
+        var action=req.body.action||0;
         var options = {
             mode: 'text',
             pythonOptions: ['-u'], // get print results in real-time
-            args: [req.body.msisdn]
+            args: [req.body.msisdn,action]
         };
         PythonShell.run(config.capture_python_file, options, function (err, results) {
             if (err) {
