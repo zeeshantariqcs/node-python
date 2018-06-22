@@ -19,7 +19,7 @@
         <div class="collapse navbar-collapse justify-content-end">
             <!--<a class="nav-link" href="http://xflowresearch.com/"><img src="/images/logo.png"> </a>-->
             <a class="nav-link" href="http://xflowresearch.com/"><img id="logo" alt="x-Flow Logo"
-                                                                      src="/images/xFlow-Logo.png">
+                                                                      src="/images/xFlow-logo.png">
             </a>
         </div>
     </nav>
@@ -101,9 +101,15 @@
                                                data-toggle="tooltip" data-placement="bottom" title="Start Capturing"><i
                                                         class="fas fa-box"></i>
                                                 Capture</a>
+                                            <!--<a data-toggle="tooltip" data-placement="bottom" title="Download File"-->
+                                            <!--id="download-file"-->
+                                            <!--class="btn grey-button d-none" href="./download-file" download><i-->
+                                            <!--class="fas fa-download"></i> Download</a>-->
+
                                             <a data-toggle="tooltip" data-placement="bottom" title="Download File"
                                                id="download-file"
-                                               class="btn grey-button d-none" href="./download-file" download><i
+                                               class="btn grey-button d-none" href="<%= base_api_url %>/download"
+                                               download><i
                                                         class="fas fa-download"></i> Download</a>
                                         </div>
 
@@ -236,8 +242,8 @@
         $('#output-message').find('.alert').html(msg);
     }
 
-    function validateMsisdn(mssidn) {
-        if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12 && mssidn.substring(0, 3) == '971')
+    function validateMsisdn(msisdn) {
+        if (msisdn != "" && !isNaN(msisdn) && msisdn.length == 12 && msisdn.substring(0, 3) == '971')
             return true;
         return false;
     }
@@ -281,10 +287,8 @@
 
     function addToWhitelist(msisdn) {
         console.log("ADD TO WHITELIST");
-
         if (validateMsisdn(msisdn)) {
             successHtmlState();
-            showSuccessMsg("MSISDN has been successfully added to whitelist.");
             $.post(base_api_url + "/msisdn/" + msisdn,
                 {
                     msisdn: msisdn
@@ -314,7 +318,7 @@
         if (validateMsisdn(msisdn)) {
             successHtmlState();
             $.ajax({
-                url: base_api_url+"/msisdn/" + msisdn,
+                url: base_api_url + "/msisdn/" + msisdn,
                 type: 'DELETE',
 //                beforeSend: function (xhr) {
 //                    xhr.setRequestHeader('x-access-token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMTY2NzBjYzE3NzhmMjJlODkxOTFlYyIsInVzZXJfdHlwZSI6Imd1ZXN0IiwiaWF0IjoxNTI4ODczNjUwLCJleHAiOjE1NjA0MDk2NTB9.o_LJ4I8ez8MuX8nz0VTRXoRVpluaZYP2qi2ey7uydIA");
@@ -366,10 +370,10 @@
 
         $('#capture').on('click', function (e) {
             var $this = $(this);
-            var mssidn = $('#msisdn').val();
+            var msisdn = $('#msisdn').val();
             var action = $(this).data("action");
-            console.log("I'm touched action " + action + " MSISDN IS THIS " + mssidn);
-            if (validateMsisdn(mssidn)) {
+            console.log("I'm touched action " + action + " MSISDN IS THIS " + msisdn);
+            if (validateMsisdn(msisdn)) {
                 if (action == 1) {
                     var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Stop';
                     $this.data('original-text', $(this).html());
@@ -381,13 +385,15 @@
                     $this.data('action', 1);
                     $this.html($this.data('original-text'));
                 }
-                $.post("./capture-traffic",
+
+                $.post(base_api_url + "/capture/" + msisdn,
                     {
-                        msisdn: mssidn,
-                        action: action
+                        msisdn: msisdn,
+                        action: action == 1 ? 'START' : 'STOP'
                     },
                     function (data, status) {
-                        if (status == "success" && typeof data !== "undefined" && data !== null) {
+                        //$this.html($this.data('original-text'));
+                        if (status == "success" && typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
                             if (action == 0) {
                                 $('#download-file').removeClass('d-none');
                             }
@@ -397,6 +403,8 @@
                     }).fail(function (response) {
                     failureHtmlState();
                 });
+
+
             } else {
                 $this.html($this.data('original-text'));
                 failureHtmlState();
