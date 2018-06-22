@@ -81,7 +81,7 @@
                                                         <th>PRIVATE IP</th>
                                                         <th>PUBLIC IP</th>
                                                         <th>PORT RANGE</th>
-                                                        <th>RULE APPLIED</th>
+                                                        <th>Connected</th>
                                                         <th>PACKET COUNT</th>
                                                         <th>BYTE COUNT</th>
                                                     </tr>
@@ -386,7 +386,7 @@
                     $this.html($this.data('original-text'));
                 }
 
-                $.post(base_api_url + "/capture/" + msisdn,
+                $.post(base_api_url + "/capture",
                     {
                         msisdn: msisdn,
                         action: action == 1 ? 'START' : 'STOP'
