@@ -68,7 +68,7 @@
                             <div id="output" class="row d-none">
                                 <div class="col-md-12">
                                     <div class="panel panel-default output-panel">
-                                        <div class="panel-heading"><h4>RESULT</h4>
+                                        <div class="panel-heading"><h5>RESULT</h5>
                                         </div>
 
                                         <div id="tablePanelBody" class="panel-body">
@@ -96,7 +96,7 @@
                                         </div>
 
                                         <div class="action-btn">
-                                            <a id="capture" data-action="1" class="btn grey-button"
+                                            <a id="capture" data-action="1" class="btn grey-button d-none"
                                                href="javascript:void(0)"
                                                data-toggle="tooltip" data-placement="bottom" title="Start Capturing"><i
                                                         class="fas fa-box"></i>
@@ -251,7 +251,7 @@
                 type: 'GET',
                 success: function (data) {
                     console.log("DATA IS THIS " + data);
-                    if (typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
+                    if (typeof data !== "undefined" && data !== null) {
                         successHtmlState();
                         let site = typeof data.site !== "undefined" ? data.site : "";
                         let priv_ip = typeof data.priv_ip !== "undefined" ? data.priv_ip : "";
@@ -261,6 +261,8 @@
                         let packet_count = typeof data.packets !== "undefined" ? data.packets : "";
                         let byte_count = typeof data.bytes !== "undefined" ? data.bytes : "";
                         $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
+                        if (typeof data.connected !== "undefined" && data.connected == "Yes")
+                            $('#capture').removeClass('d-none');
                     }
                     else {
                         failureHtmlState();
@@ -277,7 +279,7 @@
 
 //            $.post("./fetch-data",
 //                {
-//                    msisdn: mssidn
+//                    msisdn: msisdn
 //                },
 //                function (data, status) {
 //                    if (status == "success" && typeof data !== "undefined" && data !== null) {
@@ -412,7 +414,7 @@
             var $this = $(this);
             var mssidn = $('#msisdn').val();
             var action = $(this).data("action");
-            console.log("I'm touched action " + action + " MSISDN IS THIS "+mssidn);
+            console.log("I'm touched action " + action + " MSISDN IS THIS " + mssidn);
             if (validateMsisdn(mssidn)) {
                 if (action == 1) {
                     var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Stop';
