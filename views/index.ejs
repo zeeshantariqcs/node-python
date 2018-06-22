@@ -237,14 +237,14 @@
     }
 
     function validateMsisdn(mssidn) {
-        if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12 && mssidn.substring(0, 3) == '947')
+        if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12 && mssidn.substring(0, 3) == '971')
             return true;
         return false;
     }
 
 
-    function fetchData(mssidn) {
-        if (validateMsisdn(mssidn)) {
+    function fetchData(msisdn) {
+        if (validateMsisdn(msisdn)) {
 
             $.ajax({
                 url: base_api_url + "/data/" + msisdn,
@@ -269,9 +269,9 @@
                 }
             }).fail(function (response) {
                 failureHtmlState();
-                window.setInterval(function () {
-                    fetchData($('#msisdn').val());
-                }, 5000);
+//                window.setInterval(function () {
+//                    fetchData($('#msisdn').val());
+//                }, 5000);
             });
 
 

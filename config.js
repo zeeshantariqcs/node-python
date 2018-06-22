@@ -7,5 +7,5 @@ module.exports = {
     'python_file': './python_script/sample.py',
     'capture_python_file': './python_script/capture.py',
     'download_python_file_path': './python_script/download.txt',  //Specify the file path here
-    'base_api_url': 'http://127.0.0.1:3000/'
+    'base_api_url': 'http://127.0.0.1:5002'
 };
