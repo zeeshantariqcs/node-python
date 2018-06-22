@@ -1,5 +1,5 @@
 var express = require('express');
-var path=require('path');
+var path = require('path');
 var router = express.Router();
 var config = require('../config'); //Config Include
 var PythonShell = require('python-shell');
@@ -7,12 +7,12 @@ var PythonShell = require('python-shell');
 
 /* GET home page. */
 router.get('/dashboard', function (req, res, next) {
-    return res.render('index', {title: 'DASHBOARD', 'data': ''});
+    return res.render('index', {title: 'DASHBOARD', data: '', base_api_url: config.base_api_url});
 });
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    return res.render('index', {title: 'DASHBOARD', 'data': ''});
+    return res.render('index', {title: 'DASHBOARD', data: '', base_api_url: config.base_api_url});
 });
 
 
@@ -95,11 +95,11 @@ router.get('/download-file', function (req, res) {
 
 router.post('/capture-traffic', function (req, res, next) {
     if (typeof req.body.msisdn !== "undefined" && req.body.msisdn !== "") {
-        var action=req.body.action||0;
+        var action = req.body.action || 0;
         var options = {
             mode: 'text',
             pythonOptions: ['-u'], // get print results in real-time
-            args: [req.body.msisdn,action]
+            args: [req.body.msisdn, action]
         };
         PythonShell.run(config.capture_python_file, options, function (err, results) {
             if (err) {

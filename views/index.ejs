@@ -146,51 +146,6 @@
                                     </div>
                                 </div>
                             </form>
-                            <div id="output" class="row d-none">
-                                <div class="col-md-12">
-                                    <div class="panel panel-default output-panel">
-                                        <div class="panel-heading"><h4>RESULT</h4>
-                                        </div>
-
-                                        <div id="tablePanelBody" class="panel-body">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-hover specialCollapse">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>MSISDN</th>
-                                                        <th>SITE</th>
-                                                        <th>PRIVATE IP</th>
-                                                        <th>PUBLIC IP</th>
-                                                        <th>PORT RANGE</th>
-                                                        <th>RULE APPLIED</th>
-                                                        <th>PACKET COUNT</th>
-                                                        <th>BYTE COUNT</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr id="tr-output">
-
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <div class="action-btn">
-                                            <a id="capture" data-action="1" class="btn grey-button"
-                                               href="javascript:void(0)"
-                                               data-toggle="tooltip" data-placement="bottom" title="Start Capturing"><i
-                                                        class="fas fa-box"></i>
-                                                Capture</a>
-                                            <a data-toggle="tooltip" data-placement="bottom" title="Download File"
-                                               id="download-file"
-                                               class="btn grey-button d-none" href="./download-file" download><i
-                                                        class="fas fa-download"></i> Download</a>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -243,6 +198,8 @@
 
 <script>
 
+    var base_api_url = "<%= base_api_url %>";
+
     function failureHtmlState() {
         $('#output-error').removeClass('d-none');
         $('#output').addClass('d-none');
@@ -259,7 +216,7 @@
     }
 
 
-    function switchState(){
+    function switchState() {
         $('#output').addClass('d-none');
         $('#download-file').addClass('d-none');
         $('#main-loader').addClass('d-none');
@@ -288,43 +245,75 @@
 
     function fetchData(mssidn) {
         if (validateMsisdn(mssidn)) {
-            $.post("./fetch-data",
-                {
-                    msisdn: mssidn
-                },
-                function (data, status) {
-                    if (status == "success" && typeof data !== "undefined" && data !== null) {
 
-                        //if (data[0] == "0") {
-                        if (1) {
-                            successHtmlState();
-                            //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
-                            let msisdn = typeof data[1] != "undefined" ? data[1] : "";
-                            let site = typeof data[2] != "undefined" ? data[2] : "";
-                            let priv_ip = typeof data[3] != "undefined" ? data[3] : "";
-                            let pub_ip = typeof data[4] != "undefined" ? data[4] : "";
-                            let port_range = typeof data[5] != "undefined" ? data[5] : "";
-                            let rule_app = typeof data[6] != "undefined" ? data[6] : "";
-                            let packet_count = typeof data[7] != "undefined" ? data[7] : "";
-                            let byte_count = typeof data[8] != "undefined" ? data[8] : "";
-                            $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
-                        }
-                        else {
-                            //means not a vip number
-                            failureHtmlState();
-                            $('#output-error').find('.alert').html("Not a VIP MSISDN.");
-                        }
+            $.ajax({
+                url: base_api_url + "/data/" + msisdn,
+                type: 'GET',
+                success: function (data) {
+                    console.log("DATA IS THIS " + data);
+                    if (typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
+                        successHtmlState();
+                        let site = typeof data.site !== "undefined" ? data.site : "";
+                        let priv_ip = typeof data.priv_ip !== "undefined" ? data.priv_ip : "";
+                        let pub_ip = typeof data.pub_ip !== "undefined" ? data.pub_ip : "";
+                        let port_range = typeof data.port_range !== "undefined" ? data.port_range : "";
+                        let rule_app = typeof data.connected !== "undefined" ? data.connected : "";
+                        let packet_count = typeof data.packets !== "undefined" ? data.packets : "";
+                        let byte_count = typeof data.bytes !== "undefined" ? data.bytes : "";
+                        $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
                     }
                     else {
                         failureHtmlState();
+                        $('#output-error').find('.alert').html("Not a VIP MSISDN.");
                     }
                 }
-            ).fail(function (response) {
+            }).fail(function (response) {
                 failureHtmlState();
                 window.setInterval(function () {
                     fetchData($('#msisdn').val());
                 }, 5000);
             });
+
+
+//            $.post("./fetch-data",
+//                {
+//                    msisdn: mssidn
+//                },
+//                function (data, status) {
+//                    if (status == "success" && typeof data !== "undefined" && data !== null) {
+//
+//                        //if (data[0] == "0") {
+//                        if (1) {
+//                            successHtmlState();
+//                            //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
+//                            let msisdn = typeof data[1] != "undefined" ? data[1] : "";
+//                            let site = typeof data[2] != "undefined" ? data[2] : "";
+//                            let priv_ip = typeof data[3] != "undefined" ? data[3] : "";
+//                            let pub_ip = typeof data[4] != "undefined" ? data[4] : "";
+//                            let port_range = typeof data[5] != "undefined" ? data[5] : "";
+//                            let rule_app = typeof data[6] != "undefined" ? data[6] : "";
+//                            let packet_count = typeof data[7] != "undefined" ? data[7] : "";
+//                            let byte_count = typeof data[8] != "undefined" ? data[8] : "";
+//                            $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
+//                        }
+//                        else {
+//                            //means not a vip number
+//                            failureHtmlState();
+//                            $('#output-error').find('.alert').html("Not a VIP MSISDN.");
+//                        }
+//                    }
+//                    else {
+//                        failureHtmlState();
+//                    }
+//                }
+//            ).fail(function (response) {
+//                failureHtmlState();
+//                window.setInterval(function () {
+//                    fetchData($('#msisdn').val());
+//                }, 5000);
+//            });
+
+
         } else {
             failureHtmlState();
             $('#output-error').find('.alert').html("Not a valid MSISDN.");
@@ -338,21 +327,21 @@
         if (validateMsisdn(msisdn)) {
             successHtmlState();
             showSuccessMsg("MSISDN has been successfully added to whitelist.");
-//            $.post("./msisdn/" + msisdn,
-//                {
-//                    msisdn: msisdn
-//                },
-//                function (data, status) {
-//                    if (status == "success" && typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
-//                        showSuccessMsg(data.msg);
-//                    }
-//                    else {
-//                        failureHtmlState();
-//                    }
-//                }
-//            ).fail(function (response) {
-//                failureHtmlState();
-//            });
+            $.post(base_api_url + "/msisdn/" + msisdn,
+                {
+                    msisdn: msisdn
+                },
+                function (data, status) {
+                    if (status == "success" && typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
+                        showSuccessMsg(data.msg);
+                    }
+                    else {
+                        failureHtmlState();
+                    }
+                }
+            ).fail(function (response) {
+                failureHtmlState();
+            });
 
         }
         else {
@@ -366,9 +355,9 @@
     function removeFromWhitelist(msisdn) {
         if (validateMsisdn(msisdn)) {
             successHtmlState();
-             showSuccessMsg("MSISDN has been successfully removed from whitelist.");
+            showSuccessMsg("MSISDN has been successfully removed from whitelist.");
 //            $.ajax({
-//                url: "./msisdn/" + msisdn,
+//                url: base_api_url+"/msisdn/" + msisdn,
 //                // url: "http://localhost:6106/api/v1/cart",
 //                type: 'DELETE',
 ////                beforeSend: function (xhr) {
@@ -404,7 +393,6 @@
 
 
         $('.main-body .nav-item').on('click', function (e) {
-            console.log("CLICKINGGGG");
             switchState();
         });
 
@@ -424,8 +412,8 @@
             var $this = $(this);
             var mssidn = $('#msisdn').val();
             var action = $(this).data("action");
-            console.log("I'm touched action " + action);
-            if (mssidn != "" && !isNaN(mssidn) && mssidn.length == 12) {
+            console.log("I'm touched action " + action + " MSISDN IS THIS "+mssidn);
+            if (validateMsisdn(mssidn)) {
                 if (action == 1) {
                     var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Stop';
                     $this.data('original-text', $(this).html());
@@ -454,6 +442,27 @@
                     }).fail(function (response) {
                     failureHtmlState();
                 });
+
+
+//                $.post(base_api_url + "/capture-traffic",
+//                    {
+//                        msisdn: mssidn,
+//                        action: action == 1 ? 'START' : 'STOP'
+//                    },
+//                    function (data, status) {
+//                        //$this.html($this.data('original-text'));
+//                        if (status == "success" && typeof data !== "undefined" && data !== null) {
+//                            if (action == 0) {
+//                                $('#download-file').removeClass('d-none');
+//                            }
+//                        } else {
+//                            failureHtmlState();
+//                        }
+//                    }).fail(function (response) {
+//                    failureHtmlState();
+//                });
+
+
             } else {
                 $this.html($this.data('original-text'));
                 failureHtmlState();
