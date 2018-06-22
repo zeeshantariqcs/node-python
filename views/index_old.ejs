@@ -245,6 +245,7 @@
 
     function fetchData(msisdn) {
         if (validateMsisdn(msisdn)) {
+
             $.ajax({
                 url: base_api_url + "/data/" + msisdn,
                 type: 'GET',
@@ -270,7 +271,50 @@
                 }
             }).fail(function (response) {
                 failureHtmlState();
+//                window.setInterval(function () {
+//                    fetchData($('#msisdn').val());
+//                }, 5000);
             });
+
+
+//            $.post("./fetch-data",
+//                {
+//                    msisdn: msisdn
+//                },
+//                function (data, status) {
+//                    if (status == "success" && typeof data !== "undefined" && data !== null) {
+//
+//                        //if (data[0] == "0") {
+//                        if (1) {
+//                            successHtmlState();
+//                            //$('#tr-output').html('<td>' + data[1] + '</td><td>' + data[2] + '</td><td>' + data[3] + '</td><td>' + data[4]+ '</td><td>' + data[5] + '</td><td>' + data[6] + '</td><td>' + data[7] + '</td><td>'+data[8]+'</td>');
+//                            let msisdn = typeof data[1] != "undefined" ? data[1] : "";
+//                            let site = typeof data[2] != "undefined" ? data[2] : "";
+//                            let priv_ip = typeof data[3] != "undefined" ? data[3] : "";
+//                            let pub_ip = typeof data[4] != "undefined" ? data[4] : "";
+//                            let port_range = typeof data[5] != "undefined" ? data[5] : "";
+//                            let rule_app = typeof data[6] != "undefined" ? data[6] : "";
+//                            let packet_count = typeof data[7] != "undefined" ? data[7] : "";
+//                            let byte_count = typeof data[8] != "undefined" ? data[8] : "";
+//                            $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
+//                        }
+//                        else {
+//                            //means not a vip number
+//                            failureHtmlState();
+//                            $('#output-error').find('.alert').html("Not a VIP MSISDN.");
+//                        }
+//                    }
+//                    else {
+//                        failureHtmlState();
+//                    }
+//                }
+//            ).fail(function (response) {
+//                failureHtmlState();
+//                window.setInterval(function () {
+//                    fetchData($('#msisdn').val());
+//                }, 5000);
+//            });
+
 
         } else {
             failureHtmlState();
@@ -313,24 +357,26 @@
     function removeFromWhitelist(msisdn) {
         if (validateMsisdn(msisdn)) {
             successHtmlState();
-            $.ajax({
-                url: base_api_url+"/msisdn/" + msisdn,
-                type: 'DELETE',
-//                beforeSend: function (xhr) {
-//                    xhr.setRequestHeader('x-access-token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMTY2NzBjYzE3NzhmMjJlODkxOTFlYyIsInVzZXJfdHlwZSI6Imd1ZXN0IiwiaWF0IjoxNTI4ODczNjUwLCJleHAiOjE1NjA0MDk2NTB9.o_LJ4I8ez8MuX8nz0VTRXoRVpluaZYP2qi2ey7uydIA");
-//                },
-                success: function (data) {
-                    console.log("DATA IS THIS " + data);
-                    if (typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
-                        showSuccessMsg(data.msg);
-                    }
-                    else {
-                        failureHtmlState();
-                    }
-                }
-            }).fail(function (response) {
-                failureHtmlState();
-            });
+            showSuccessMsg("MSISDN has been successfully removed from whitelist.");
+//            $.ajax({
+//                url: base_api_url+"/msisdn/" + msisdn,
+//                // url: "http://localhost:6106/api/v1/cart",
+//                type: 'DELETE',
+////                beforeSend: function (xhr) {
+////                    xhr.setRequestHeader('x-access-token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMTY2NzBjYzE3NzhmMjJlODkxOTFlYyIsInVzZXJfdHlwZSI6Imd1ZXN0IiwiaWF0IjoxNTI4ODczNjUwLCJleHAiOjE1NjA0MDk2NTB9.o_LJ4I8ez8MuX8nz0VTRXoRVpluaZYP2qi2ey7uydIA");
+////                },
+//                success: function (data) {
+//                    console.log("DATA IS THIS " + data);
+//                    if (typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
+//                        showSuccessMsg(data.msg);
+//                    }
+//                    else {
+//                        failureHtmlState();
+//                    }
+//                }
+//            }).fail(function (response) {
+//                failureHtmlState();
+//            });
         }
         else {
             failureHtmlState();
@@ -387,6 +433,7 @@
                         action: action
                     },
                     function (data, status) {
+                        //$this.html($this.data('original-text'));
                         if (status == "success" && typeof data !== "undefined" && data !== null) {
                             if (action == 0) {
                                 $('#download-file').removeClass('d-none');
@@ -397,6 +444,27 @@
                     }).fail(function (response) {
                     failureHtmlState();
                 });
+
+
+//                $.post(base_api_url + "/capture-traffic",
+//                    {
+//                        msisdn: mssidn,
+//                        action: action == 1 ? 'START' : 'STOP'
+//                    },
+//                    function (data, status) {
+//                        //$this.html($this.data('original-text'));
+//                        if (status == "success" && typeof data !== "undefined" && data !== null) {
+//                            if (action == 0) {
+//                                $('#download-file').removeClass('d-none');
+//                            }
+//                        } else {
+//                            failureHtmlState();
+//                        }
+//                    }).fail(function (response) {
+//                    failureHtmlState();
+//                });
+
+
             } else {
                 $this.html($this.data('original-text'));
                 failureHtmlState();
