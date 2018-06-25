@@ -17,7 +17,6 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="#">DASHBOARD</a>
         <div class="collapse navbar-collapse justify-content-end">
-            <!--<a class="nav-link" href="http://xflowresearch.com/"><img src="/images/logo.png"> </a>-->
             <a class="nav-link" href="http://xflowresearch.com/"><img id="logo" alt="x-Flow Logo"
                                                                       src="/images/xFlow-logo.png">
             </a>
@@ -49,7 +48,7 @@
                                     <div class="col-6 col-md-3">
                                         <div class="form-group">
                                             <!-- <label for="msisdn">MSISDN</label> -->
-                                            <input required type="text" class="form-control" id="msisdn"
+                                            <input required type="text" class="form-control input-field" id="msisdn"
                                                    aria-describedby="Msisdn"
                                                    placeholder="Enter MSISDN">
                                         </div>
@@ -101,10 +100,6 @@
                                                data-toggle="tooltip" data-placement="bottom" title="Start Capturing"><i
                                                         class="fas fa-box"></i>
                                                 Capture</a>
-                                            <!--<a data-toggle="tooltip" data-placement="bottom" title="Download File"-->
-                                            <!--id="download-file"-->
-                                            <!--class="btn grey-button d-none" href="./download-file" download><i-->
-                                            <!--class="fas fa-download"></i> Download</a>-->
 
                                             <a data-toggle="tooltip" data-placement="bottom" title="Download File"
                                                id="download-file"
@@ -125,7 +120,7 @@
                                 <div class="row">
                                     <div class="col-6 col-md-3">
                                         <div class="form-group">
-                                            <input required type="text" class="form-control" id="msisdn"
+                                            <input required type="text" class="form-control input-field" id="msisdn"
                                                    aria-describedby="Msisdn"
                                                    placeholder="Enter MSISDN">
                                         </div>
@@ -144,8 +139,7 @@
                                                         data-placement="bottom"
                                                         title="Remove user from whitelist"
                                                         id="delete-whitelist" class="btn grey-button whitelist-action">
-                                                    <i
-                                                            class="far fa-trash-alt"></i> Delete
+                                                    <i class="far fa-trash-alt"></i> Delete
                                                 </button>
                                             </div>
                                         </div>
@@ -204,7 +198,8 @@
 
 <script>
 
-    var base_api_url = "<%= base_api_url %>";
+
+    const base_api_url = "<%= base_api_url %>";
 
     function failureHtmlState() {
         $('#output-error').removeClass('d-none');
@@ -219,6 +214,7 @@
         $('#download-file').addClass('d-none');
         $('#main-loader').removeClass('d-none');
         $('#output-message').addClass('d-none');
+        $('#output-error').find('.alert').html("");
     }
 
 
@@ -230,11 +226,16 @@
         $('#output-error').addClass('d-none');
     }
 
+    function errorServerRequest() {
+        $('#output-error').find('.alert').html("Error occurred in sending request to the server.");
+    }
+
 
     function successHtmlState() {
         $('#output').removeClass('d-none');
         $('#main-loader').addClass('d-none');
         $('#output-error').addClass('d-none');
+        $('#output-error').find('.alert').html("");
     }
 
     function showSuccessMsg(msg) {
@@ -245,17 +246,25 @@
     function validateMsisdn(msisdn) {
         if (msisdn != "" && !isNaN(msisdn) && msisdn.length == 12 && msisdn.substring(0, 3) == '971')
             return true;
-        return false;
+        else {
+            failureHtmlState();
+            if (msisdn == "")
+                $('#output-error').find('.alert').html("Please enter MSISDN");
+            else
+                $('#output-error').find('.alert').html(`${msisdn} is not a valid MSISDN`);
+            return false;
+        }
+
     }
 
 
     function fetchData(msisdn) {
         if (validateMsisdn(msisdn)) {
             $.ajax({
-                url: base_api_url + "/data/" + msisdn,
+                url: `${base_api_url}/data/${msisdn}`,
                 type: 'GET',
-                success: function (data) {
-                    console.log("DATA IS THIS " + data);
+                success(data) {
+                    console.log(`DATA IS THIS ${data}`);
                     if (typeof data !== "undefined" && data !== null) {
                         successHtmlState();
                         let site = typeof data.site !== "undefined" ? data.site : "";
@@ -265,7 +274,7 @@
                         let rule_app = typeof data.connected !== "undefined" ? data.connected : "";
                         let packet_count = typeof data.packets !== "undefined" ? data.packets : "";
                         let byte_count = typeof data.bytes !== "undefined" ? data.bytes : "";
-                        $('#tr-output').html('<td>' + msisdn + '</td><td>' + site + '</td><td>' + priv_ip + '</td><td>' + pub_ip + '</td><td>' + port_range + '</td> <td>' + rule_app + '</td><td>' + packet_count + '</td><td>' + byte_count + '</td> ');
+                        $('#tr-output').html(`<td>${msisdn}</td><td>${site}</td><td>${priv_ip}</td><td>${pub_ip}</td><td>${port_range}</td> <td>${rule_app}</td><td>${packet_count}</td><td>${byte_count}</td> `);
                         if (typeof data.connected !== "undefined" && data.connected == "Yes")
                             $('#capture').removeClass('d-none');
                     }
@@ -274,13 +283,11 @@
                         $('#output-error').find('.alert').html("Not a VIP MSISDN.");
                     }
                 }
-            }).fail(function (response) {
+            }).fail(response => {
                 failureHtmlState();
+                errorServerRequest();
             });
 
-        } else {
-            failureHtmlState();
-            $('#output-error').find('.alert').html("Not a valid MSISDN.");
         }
     }
 
@@ -288,78 +295,75 @@
     function addToWhitelist(msisdn) {
         console.log("ADD TO WHITELIST");
         if (validateMsisdn(msisdn)) {
-            successHtmlState();
-            $.post(base_api_url + "/msisdn/" + msisdn,
+            initialHtmlState();
+            $.post(`${base_api_url}/msisdn/${msisdn}`,
                 {
-                    msisdn: msisdn
+                    msisdn
                 },
-                function (data, status) {
+                (data, status) => {
+                    console.log("POST RESPONSE BLOCK");
                     if (status == "success" && typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
                         showSuccessMsg(data.msg);
+                        successHtmlState();
                     }
                     else {
                         failureHtmlState();
                     }
                 }
-            ).fail(function (response) {
+            ).fail(response => {
                 failureHtmlState();
+                errorServerRequest();
             });
 
-        }
-        else {
-            failureHtmlState();
-            console.log("Failure jasndjas");
-            $('#output-error').find('.alert').html("Not a valid MSISDN.");
         }
     }
 
 
     function removeFromWhitelist(msisdn) {
         if (validateMsisdn(msisdn)) {
-            successHtmlState();
+            initialHtmlState();
             $.ajax({
-                url: base_api_url + "/msisdn/" + msisdn,
+                url: `${base_api_url}/msisdn/${msisdn}`,
                 type: 'DELETE',
-//                beforeSend: function (xhr) {
-//                    xhr.setRequestHeader('x-access-token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMTY2NzBjYzE3NzhmMjJlODkxOTFlYyIsInVzZXJfdHlwZSI6Imd1ZXN0IiwiaWF0IjoxNTI4ODczNjUwLCJleHAiOjE1NjA0MDk2NTB9.o_LJ4I8ez8MuX8nz0VTRXoRVpluaZYP2qi2ey7uydIA");
-//                },
-                success: function (data) {
-                    console.log("DATA IS THIS " + data);
+                success(data) {
+                    console.log(`DATA IS THIS ${data}`);
                     if (typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
                         showSuccessMsg(data.msg);
+                        successHtmlState();
                     }
                     else {
                         failureHtmlState();
                     }
                 }
-            }).fail(function (response) {
+            }).fail(response => {
                 failureHtmlState();
+                errorServerRequest();
             });
-        }
-        else {
-            failureHtmlState();
-            $('#output-error').find('.alert').html("Not a valid MSISDN.");
         }
     }
 
 
-    $(document).ready(function (e) {
+    $(document).ready(e => {
         //$('[data-toggle="tooltip"]').tooltip();
-        $('#idn-form').on('submit', function (e) {
+        $('#idn-form').on('submit', e => {
             e.preventDefault();
             initialHtmlState();
             fetchData($('#msisdn').val());
         });
 
+        $('.input-field').keyup(() => {
+            $('#output-error').addClass('d-none');
+        });
 
-        $('.main-body .nav-item').on('click', function (e) {
+
+        $('.main-body .nav-item').on('click', e => {
             switchState();
         });
 
 
         $('.whitelist-action').on('click', function (e) {
             e.preventDefault();
-            console.log("CLICKING  " + $('#whitelist-form').find('#msisdn').val() + " action is this " + $(this).data("action"));
+            console.log(`CLICKING  ${$('#whitelist-form').find('#msisdn').val()} action is this ${$(this).data("action")}`);
             initialHtmlState();
             if ($(this).data("action") == "add")
                 addToWhitelist($('#whitelist-form').find('#msisdn').val());
@@ -369,13 +373,13 @@
 
 
         $('#capture').on('click', function (e) {
-            var $this = $(this);
-            var msisdn = $('#msisdn').val();
-            var action = $(this).data("action");
-            console.log("I'm touched action " + action + " MSISDN IS THIS " + msisdn);
+            const $this = $(this);
+            const msisdn = $('#msisdn').val();
+            const action = $(this).data("action");
+            console.log(`I'm touched action ${action} MSISDN IS THIS ${msisdn}`);
             if (validateMsisdn(msisdn)) {
                 if (action == 1) {
-                    var loadingText = '<i class="fas fa-spinner fa-spin"></i>  Stop';
+                    const loadingText = '<i class="fas fa-spinner fa-spin"></i>  Stop';
                     $this.data('original-text', $(this).html());
                     $this.attr('title', 'Stop Capturing');
                     $('#download-file').addClass('d-none');
@@ -386,12 +390,12 @@
                     $this.html($this.data('original-text'));
                 }
 
-                $.post(base_api_url + "/capture",
+                $.post(`${base_api_url}/capture`,
                     {
-                        msisdn: msisdn,
+                        msisdn,
                         action: action == 1 ? 'START' : 'STOP'
                     },
-                    function (data, status) {
+                    (data, status) => {
                         //$this.html($this.data('original-text'));
                         if (status == "success" && typeof data !== "undefined" && data !== null && typeof data.msg !== "undefined") {
                             if (action == 0) {
@@ -400,18 +404,18 @@
                         } else {
                             failureHtmlState();
                         }
-                    }).fail(function (response) {
+                    }).fail(response => {
                     failureHtmlState();
+                    errorServerRequest();
                 });
 
 
             } else {
                 $this.html($this.data('original-text'));
-                failureHtmlState();
-                $('#output-error').find('.alert').html("Not a valid MSISDN.");
             }
         });
     });
+
 </script>
 
 </body>
